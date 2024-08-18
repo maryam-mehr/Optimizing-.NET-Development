@@ -1,0 +1,34 @@
+name: Test Pipeline  # Defines the name of the workflow
+
+# Specifies the events that trigger the workflow
+on: 
+  - push          # Trigger the workflow on push events to any branch
+  - pull_request  # Trigger the workflow on pull request events
+
+jobs:
+  # Job to run unit tests
+  unit-tests:
+    runs-on: ubuntu-latest  # Specifies the operating system for the job
+
+    steps:
+      # Step to check out the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3  # Uses the checkout action to clone the repository
+
+      # Step to run unit tests
+      - name: Run unit tests
+        run: dotnet test --filter Category=Unit  # Runs unit tests with the specified filter
+
+  # Job to run integration tests
+  integration-tests:
+    runs-on: ubuntu-latest  # Specifies the operating system for the job
+    needs: unit-tests      # Ensures that this job runs only after the 'unit-tests' job completes successfully
+
+    steps:
+      # Step to check out the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3  # Uses the checkout action to clone the repository
+
+      # Step to run integration tests
+      - name: Run integration tests
+        run: dotnet test --filter Category=Integration  # Runs integration tests with the specified filter
