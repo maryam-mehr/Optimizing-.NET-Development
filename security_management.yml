@@ -1,0 +1,19 @@
+name: Deploy to Azure
+
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Azure
+        env:
+          AZURE_WEBAPP_NAME: 'my-webapp'
+          AZURE_RESOURCE_GROUP: 'my-resource-group'
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+        run: |
+          az login --service-principal --username ${{ secrets.AZURE_CREDENTIALS }} --password ${{ secrets.AZURE_CREDENTIALS_PASSWORD }} --tenant ${{ secrets.AZURE_TENANT }}
+          az webapp deploy --name $AZURE_WEBAPP_NAME --resource-group $AZURE_RESOURCE_GROUP --src-path './bin/Release/net6.0/publish'
